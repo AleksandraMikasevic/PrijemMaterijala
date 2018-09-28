@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -21,16 +22,20 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "stavkaprijemnice")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Stavkaprijemnice.findAll", query = "SELECT s FROM Stavkaprijemnice s")
     , @NamedQuery(name = "Stavkaprijemnice.findByBrojPrijemnice", query = "SELECT s FROM Stavkaprijemnice s WHERE s.stavkaprijemnicePK.brojPrijemnice = :brojPrijemnice")
-    , @NamedQuery(name = "Stavkaprijemnice.findByRedniBroj", query = "SELECT s FROM Stavkaprijemnice s WHERE s.stavkaprijemnicePK.redniBroj = :redniBroj")
+    , @NamedQuery(name = "Stavkaprijemnice.findByBrojStavke", query = "SELECT s FROM Stavkaprijemnice s WHERE s.stavkaprijemnicePK.brojStavke = :brojStavke")
+    , @NamedQuery(name = "Stavkaprijemnice.findByRedniBroj", query = "SELECT s FROM Stavkaprijemnice s WHERE s.redniBroj = :redniBroj")
     , @NamedQuery(name = "Stavkaprijemnice.findByKolicina", query = "SELECT s FROM Stavkaprijemnice s WHERE s.kolicina = :kolicina")})
 public class Stavkaprijemnice implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected StavkaprijemnicePK stavkaprijemnicePK;
+    @Column(name = "redniBroj")
+    private Integer redniBroj;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "kolicina")
     private Double kolicina;
@@ -44,14 +49,15 @@ public class Stavkaprijemnice implements Serializable {
     public Stavkaprijemnice() {
         stavkaprijemnicePK = new StavkaprijemnicePK();
         sifraMaterijala = new Materijal();
+
     }
 
     public Stavkaprijemnice(StavkaprijemnicePK stavkaprijemnicePK) {
         this.stavkaprijemnicePK = stavkaprijemnicePK;
     }
 
-    public Stavkaprijemnice(int brojPrijemnice, int redniBroj) {
-        this.stavkaprijemnicePK = new StavkaprijemnicePK(brojPrijemnice, redniBroj);
+    public Stavkaprijemnice(int brojPrijemnice, int brojStavke) {
+        this.stavkaprijemnicePK = new StavkaprijemnicePK(brojPrijemnice, brojStavke);
     }
 
     public StavkaprijemnicePK getStavkaprijemnicePK() {
@@ -60,6 +66,14 @@ public class Stavkaprijemnice implements Serializable {
 
     public void setStavkaprijemnicePK(StavkaprijemnicePK stavkaprijemnicePK) {
         this.stavkaprijemnicePK = stavkaprijemnicePK;
+    }
+
+    public Integer getRedniBroj() {
+        return redniBroj;
+    }
+
+    public void setRedniBroj(Integer redniBroj) {
+        this.redniBroj = redniBroj;
     }
 
     public Double getKolicina() {
@@ -110,4 +124,5 @@ public class Stavkaprijemnice implements Serializable {
     public String toString() {
         return "com.aleksandra.domen.Stavkaprijemnice[ stavkaprijemnicePK=" + stavkaprijemnicePK + " ]";
     }
+
 }

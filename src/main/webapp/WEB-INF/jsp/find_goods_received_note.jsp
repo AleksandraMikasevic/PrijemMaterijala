@@ -47,7 +47,7 @@
                     <tbody>
                         <c:forEach items="${grcn.stavkaprijemniceCollection}" var="item">
                             <tr>
-                                <th scope="row">${item.stavkaprijemnicePK.redniBroj}</th>
+                                <th scope="row">${item.redniBroj}</th>
                                 <td>${item.kolicina}</td>
                                 <td>${item.sifraMaterijala.nazivMaterijala}</td>
                                 <td>${item.sifraMaterijala.cena}</td>

@@ -18,6 +18,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -25,6 +28,7 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "materijal")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Materijal.findAll", query = "SELECT m FROM Materijal m")
     , @NamedQuery(name = "Materijal.findBySifraMaterijala", query = "SELECT m FROM Materijal m WHERE m.sifraMaterijala = :sifraMaterijala")
@@ -52,15 +56,10 @@ public class Materijal implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "cena")
     private Double cena;
+    @OneToMany(mappedBy = "sifraMaterijala")
+    private Collection<Stavkaprijemnice> stavkaprijemniceCollection;
     @Transient
     private JedinicaMere jm;
-    
-    public Materijal() {
-    }
-
-    public Materijal(String sifraMaterijala) {
-        this.sifraMaterijala = sifraMaterijala;
-    }
 
     public void setJm(JedinicaMere jm) {
         this.jm = jm;
@@ -69,7 +68,14 @@ public class Materijal implements Serializable {
     public JedinicaMere getJm() {
         return jm;
     }
-    
+
+    public Materijal() {
+    }
+
+    public Materijal(String sifraMaterijala) {
+        this.sifraMaterijala = sifraMaterijala;
+    }
+
     public String getSifraMaterijala() {
         return sifraMaterijala;
     }
@@ -110,6 +116,16 @@ public class Materijal implements Serializable {
         this.cena = cena;
     }
 
+    @XmlTransient
+    @JsonIgnore
+    public Collection<Stavkaprijemnice> getStavkaprijemniceCollection() {
+        return stavkaprijemniceCollection;
+    }
+
+    public void setStavkaprijemniceCollection(Collection<Stavkaprijemnice> stavkaprijemniceCollection) {
+        this.stavkaprijemniceCollection = stavkaprijemniceCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -134,5 +150,5 @@ public class Materijal implements Serializable {
     public String toString() {
         return nazivMaterijala;
     }
-    
+
 }

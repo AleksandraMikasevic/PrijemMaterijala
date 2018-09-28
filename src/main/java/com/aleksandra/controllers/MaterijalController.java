@@ -84,7 +84,7 @@ public class MaterijalController {
     }
 
     @RequestMapping(value = "/remove_material/{id}", method = RequestMethod.POST)
-    public ModelAndView remove_material_post(@PathVariable String id) {
+    public ModelAndView remove_material_post(@PathVariable String id, @ModelAttribute("material") Materijal materijal) {
         MaterijalService materijalS = new MaterijalService();
         ModelAndView mv = new ModelAndView();
         try {

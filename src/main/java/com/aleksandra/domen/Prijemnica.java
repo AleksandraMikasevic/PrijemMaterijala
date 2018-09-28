@@ -7,6 +7,7 @@ package com.aleksandra.domen;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -24,6 +25,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -32,6 +36,7 @@ import org.springframework.format.annotation.DateTimeFormat;
  */
 @Entity
 @Table(name = "prijemnica")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Prijemnica.findAll", query = "SELECT p FROM Prijemnica p")
     , @NamedQuery(name = "Prijemnica.findByBrojPrijemnice", query = "SELECT p FROM Prijemnica p WHERE p.brojPrijemnice = :brojPrijemnice")
@@ -50,29 +55,22 @@ public class Prijemnica implements Serializable {
     @DateTimeFormat(pattern = "yy-mm-dd")
     @Temporal(TemporalType.DATE)
     private Date datum;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "ukupno")
-    @Transient
-    private String datumS;
-    private double ukupno;
+    private Double ukupno;
     @JoinColumn(name = "jmbg", referencedColumnName = "jmbg")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Zaposleni jmbg;
     @JoinColumn(name = "brojVagarskePotvrde", referencedColumnName = "brojVagarskePotvrde")
-    @ManyToOne(optional = false)
+    @ManyToOne
     private Vagarskapotvrda brojVagarskePotvrde;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "prijemnica", orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "prijemnica", orphanRemoval = true)
     private List<Stavkaprijemnice> stavkaprijemniceCollection;
+    @Transient
+    private String datumS;
 
     public Prijemnica() {
         stavkaprijemniceCollection = new ArrayList<>();
-    }
-
-    public void setDatumS(String datumS) {
-        this.datumS = datumS;
-    }
-
-    public String getDatumS() {
-        return datumS;
     }
 
     public Prijemnica(Integer brojPrijemnice) {
@@ -81,6 +79,14 @@ public class Prijemnica implements Serializable {
 
     public Integer getBrojPrijemnice() {
         return brojPrijemnice;
+    }
+
+    public String getDatumS() {
+        return datumS;
+    }
+
+    public void setDatumS(String datumS) {
+        this.datumS = datumS;
     }
 
     public void setBrojPrijemnice(Integer brojPrijemnice) {
@@ -95,11 +101,11 @@ public class Prijemnica implements Serializable {
         this.datum = datum;
     }
 
-    public double getUkupno() {
+    public Double getUkupno() {
         return ukupno;
     }
 
-    public void setUkupno(double ukupno) {
+    public void setUkupno(Double ukupno) {
         this.ukupno = ukupno;
     }
 
@@ -119,6 +125,8 @@ public class Prijemnica implements Serializable {
         this.brojVagarskePotvrde = brojVagarskePotvrde;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public List<Stavkaprijemnice> getStavkaprijemniceCollection() {
         return stavkaprijemniceCollection;
     }

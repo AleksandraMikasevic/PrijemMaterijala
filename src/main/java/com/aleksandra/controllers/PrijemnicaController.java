@@ -62,7 +62,9 @@ public class PrijemnicaController {
         ModelAndView mv = new ModelAndView("add_goods_received_note");
         PrijemnicaService prijemnicaService = new PrijemnicaService();
         try {
-            prijemnica.setBrojPrijemnice(prijemnicaService.vratiBrojPrijemnice());
+            int brojPrijemnice = prijemnicaService.vratiBrojPrijemnice();
+            System.out.println(brojPrijemnice+"  -----------------------------------broj prijemnice");
+            prijemnica.setBrojPrijemnice(brojPrijemnice);
         } catch (Exception ex) {
             Logger.getLogger(PrijemnicaController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -149,8 +151,10 @@ public class PrijemnicaController {
             Stavkaprijemnice stavka = new Stavkaprijemnice();
             if (prijemnica.getStavkaprijemniceCollection().size() == 0) {
                 stavka = new Stavkaprijemnice(new StavkaprijemnicePK(prijemnica.getBrojPrijemnice(), 1));
+                stavka.setRedniBroj(1);
             } else {
-                stavka = new Stavkaprijemnice(new StavkaprijemnicePK(prijemnica.getBrojPrijemnice(), prijemnica.getStavkaprijemniceCollection().get(prijemnica.getStavkaprijemniceCollection().size() - 1).getStavkaprijemnicePK().getRedniBroj() + 1));
+                stavka = new Stavkaprijemnice(new StavkaprijemnicePK(prijemnica.getBrojPrijemnice(), prijemnica.getStavkaprijemniceCollection().get(prijemnica.getStavkaprijemniceCollection().size() - 1).getStavkaprijemnicePK().getBrojStavke() + 1));
+                stavka.setRedniBroj(rbr);
             }
             stavka.setSifraMaterijala((new MaterijalService().pronadjiMaterijal(sifraMaterijala)));
             stavka.setPrijemnica(prijemnica);
@@ -178,8 +182,10 @@ public class PrijemnicaController {
             Stavkaprijemnice stavka = new Stavkaprijemnice();
             if (prijemnica.getStavkaprijemniceCollection().size() == 0) {
                 stavka = new Stavkaprijemnice(new StavkaprijemnicePK(prijemnica.getBrojPrijemnice(), 1));
+                stavka.setRedniBroj(1);
             } else {
-                stavka = new Stavkaprijemnice(new StavkaprijemnicePK(prijemnica.getBrojPrijemnice(), prijemnica.getStavkaprijemniceCollection().get(prijemnica.getStavkaprijemniceCollection().size() - 1).getStavkaprijemnicePK().getRedniBroj() + 1));
+                stavka = new Stavkaprijemnice(new StavkaprijemnicePK(prijemnica.getBrojPrijemnice(), prijemnica.getStavkaprijemniceCollection().get(prijemnica.getStavkaprijemniceCollection().size() - 1).getStavkaprijemnicePK().getBrojStavke() + 1));
+                stavka.setRedniBroj(rbr);
             }
             stavka.setSifraMaterijala((new MaterijalService().pronadjiMaterijal(sifraMaterijala)));
             stavka.setPrijemnica(prijemnica);
@@ -200,6 +206,7 @@ public class PrijemnicaController {
         return null;
     }
 
+    
     @RequestMapping(value = "/goods_received_note_item_info/{rbr}", method = RequestMethod.GET)
     public ModelAndView goods_received_note_item_info(@PathVariable int rbr) {
         ModelAndView mv = new ModelAndView("goods_received_note_item_info");
@@ -247,6 +254,7 @@ public class PrijemnicaController {
     public String remove_update_goods_received_note_item(@PathVariable int rbr) {
         Stavkaprijemnice stavka = pronadjiStavku(rbr);
         prijemnica.getStavkaprijemniceCollection().remove(stavka);
+        srediRbr();
         return "redirect:/goods_received_note/change_goods_received_items";
     }
 
@@ -345,7 +353,7 @@ public class PrijemnicaController {
 
     private void srediRbr() {
         for (int i = 0; i < prijemnica.getStavkaprijemniceCollection().size(); i++) {
-            prijemnica.getStavkaprijemniceCollection().get(i).getStavkaprijemnicePK().setRedniBroj(i + 1);
+            prijemnica.getStavkaprijemniceCollection().get(i).setRedniBroj(i + 1);
         }
     }
 
@@ -363,7 +371,8 @@ public class PrijemnicaController {
 
     private void ispisi() {
         for (Stavkaprijemnice stavkaprijemnice : prijemnica.getStavkaprijemniceCollection()) {
-            System.out.println("redni bro: " + stavkaprijemnice.getStavkaprijemnicePK().getRedniBroj());
+            System.out.println("redni bro: " + stavkaprijemnice.getStavkaprijemnicePK().getBrojStavke());
+            System.out.println("redni bro: " + stavkaprijemnice.getRedniBroj());
         }
 
     }
@@ -377,7 +386,7 @@ public class PrijemnicaController {
 
     private Stavkaprijemnice pronadjiStavku(int rbr) {
         for (Stavkaprijemnice stavkaprijemnice : prijemnica.getStavkaprijemniceCollection()) {
-            if (stavkaprijemnice.getStavkaprijemnicePK().getRedniBroj() == rbr) {
+            if (stavkaprijemnice.getStavkaprijemnicePK().getBrojStavke() == rbr) {
                 return stavkaprijemnice;
             }
         }

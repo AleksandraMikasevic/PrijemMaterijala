@@ -46,10 +46,10 @@
                     <tbody id="stavke">
                         <c:forEach items="${grcn.stavkaprijemniceCollection}" var="item">
                             <tr>
-                                <th scope="row">${item.stavkaprijemnicePK.redniBroj}</th>
+                                <th scope="row">${item.redniBroj}</th>
                                 <td>${item.kolicina}</td>
                                 <td>${item.sifraMaterijala.sifraMaterijala}</td>
-                                <td><a href="/NJProjekatFED/goods_received_note/goods_received_note_item_info/${item.stavkaprijemnicePK.redniBroj}" class="btn btn-primary"><i class="fa fa-cogs"></i></a></td>
+                                <td><a href="/NJProjekatFED/goods_received_note/goods_received_note_item_info/${item.stavkaprijemnicePK.brojStavke}" class="btn btn-primary"><i class="fa fa-cogs"></i></a></td>
                             </tr>
                         </c:forEach>
                     </tbody>

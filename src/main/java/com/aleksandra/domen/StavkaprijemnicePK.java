@@ -24,15 +24,15 @@ public class StavkaprijemnicePK implements Serializable {
     private int brojPrijemnice;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "redniBroj")
-    private int redniBroj;
+    @Column(name = "brojStavke")
+    private int brojStavke;
 
     public StavkaprijemnicePK() {
     }
 
-    public StavkaprijemnicePK(int brojPrijemnice, int redniBroj) {
+    public StavkaprijemnicePK(int brojPrijemnice, int brojStavke) {
         this.brojPrijemnice = brojPrijemnice;
-        this.redniBroj = redniBroj;
+        this.brojStavke = brojStavke;
     }
 
     public int getBrojPrijemnice() {
@@ -43,19 +43,19 @@ public class StavkaprijemnicePK implements Serializable {
         this.brojPrijemnice = brojPrijemnice;
     }
 
-    public int getRedniBroj() {
-        return redniBroj;
+    public int getBrojStavke() {
+        return brojStavke;
     }
 
-    public void setRedniBroj(int redniBroj) {
-        this.redniBroj = redniBroj;
+    public void setBrojStavke(int brojStavke) {
+        this.brojStavke = brojStavke;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (int) brojPrijemnice;
-        hash += (int) redniBroj;
+        hash += (int) brojStavke;
         return hash;
     }
 
@@ -69,7 +69,7 @@ public class StavkaprijemnicePK implements Serializable {
         if (this.brojPrijemnice != other.brojPrijemnice) {
             return false;
         }
-        if (this.redniBroj != other.redniBroj) {
+        if (this.brojStavke != other.brojStavke) {
             return false;
         }
         return true;
@@ -77,7 +77,7 @@ public class StavkaprijemnicePK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.aleksandra.domen.StavkaprijemnicePK[ brojPrijemnice=" + brojPrijemnice + ", redniBroj=" + redniBroj + " ]";
+        return "com.aleksandra.domen.StavkaprijemnicePK[ brojPrijemnice=" + brojPrijemnice + ", brojStavke=" + brojStavke + " ]";
     }
     
 }

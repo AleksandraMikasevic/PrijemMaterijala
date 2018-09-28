@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -21,10 +22,12 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "stavkavagarskepotvrde")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Stavkavagarskepotvrde.findAll", query = "SELECT s FROM Stavkavagarskepotvrde s")
     , @NamedQuery(name = "Stavkavagarskepotvrde.findByBrojVagarskePotvrde", query = "SELECT s FROM Stavkavagarskepotvrde s WHERE s.stavkavagarskepotvrdePK.brojVagarskePotvrde = :brojVagarskePotvrde")
-    , @NamedQuery(name = "Stavkavagarskepotvrde.findByRedniBroj", query = "SELECT s FROM Stavkavagarskepotvrde s WHERE s.stavkavagarskepotvrdePK.redniBroj = :redniBroj")
+    , @NamedQuery(name = "Stavkavagarskepotvrde.findByBrojStavke", query = "SELECT s FROM Stavkavagarskepotvrde s WHERE s.stavkavagarskepotvrdePK.brojStavke = :brojStavke")
+    , @NamedQuery(name = "Stavkavagarskepotvrde.findByRedniBroj", query = "SELECT s FROM Stavkavagarskepotvrde s WHERE s.redniBroj = :redniBroj")
     , @NamedQuery(name = "Stavkavagarskepotvrde.findByBrutoMasa", query = "SELECT s FROM Stavkavagarskepotvrde s WHERE s.brutoMasa = :brutoMasa")
     , @NamedQuery(name = "Stavkavagarskepotvrde.findByNetoMasa", query = "SELECT s FROM Stavkavagarskepotvrde s WHERE s.netoMasa = :netoMasa")})
 public class Stavkavagarskepotvrde implements Serializable {
@@ -32,6 +35,8 @@ public class Stavkavagarskepotvrde implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected StavkavagarskepotvrdePK stavkavagarskepotvrdePK;
+    @Column(name = "redniBroj")
+    private Integer redniBroj;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "brutoMasa")
     private Double brutoMasa;
@@ -48,8 +53,8 @@ public class Stavkavagarskepotvrde implements Serializable {
         this.stavkavagarskepotvrdePK = stavkavagarskepotvrdePK;
     }
 
-    public Stavkavagarskepotvrde(int brojVagarskePotvrde, int redniBroj) {
-        this.stavkavagarskepotvrdePK = new StavkavagarskepotvrdePK(brojVagarskePotvrde, redniBroj);
+    public Stavkavagarskepotvrde(int brojVagarskePotvrde, int brojStavke) {
+        this.stavkavagarskepotvrdePK = new StavkavagarskepotvrdePK(brojVagarskePotvrde, brojStavke);
     }
 
     public StavkavagarskepotvrdePK getStavkavagarskepotvrdePK() {
@@ -58,6 +63,14 @@ public class Stavkavagarskepotvrde implements Serializable {
 
     public void setStavkavagarskepotvrdePK(StavkavagarskepotvrdePK stavkavagarskepotvrdePK) {
         this.stavkavagarskepotvrdePK = stavkavagarskepotvrdePK;
+    }
+
+    public Integer getRedniBroj() {
+        return redniBroj;
+    }
+
+    public void setRedniBroj(Integer redniBroj) {
+        this.redniBroj = redniBroj;
     }
 
     public Double getBrutoMasa() {

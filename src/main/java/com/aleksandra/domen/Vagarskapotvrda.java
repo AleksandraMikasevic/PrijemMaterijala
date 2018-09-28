@@ -22,6 +22,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -29,6 +32,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "vagarskapotvrda")
+@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Vagarskapotvrda.findAll", query = "SELECT v FROM Vagarskapotvrda v")
     , @NamedQuery(name = "Vagarskapotvrda.findByBrojVagarskePotvrde", query = "SELECT v FROM Vagarskapotvrda v WHERE v.brojVagarskePotvrde = :brojVagarskePotvrde")
@@ -45,12 +49,13 @@ public class Vagarskapotvrda implements Serializable {
     @Column(name = "datum")
     @Temporal(TemporalType.DATE)
     private Date datum;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "ukupnaMasa")
-    private Long ukupnaMasa;
+    private Double ukupnaMasa;
     @JoinColumn(name = "jmbg", referencedColumnName = "jmbg")
     @ManyToOne
     private Zaposleni jmbg;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "brojVagarskePotvrde")
+    @OneToMany(mappedBy = "brojVagarskePotvrde")
     private Collection<Prijemnica> prijemnicaCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "vagarskapotvrda")
     private Collection<Stavkavagarskepotvrde> stavkavagarskepotvrdeCollection;
@@ -78,11 +83,11 @@ public class Vagarskapotvrda implements Serializable {
         this.datum = datum;
     }
 
-    public Long getUkupnaMasa() {
+    public Double getUkupnaMasa() {
         return ukupnaMasa;
     }
 
-    public void setUkupnaMasa(Long ukupnaMasa) {
+    public void setUkupnaMasa(Double ukupnaMasa) {
         this.ukupnaMasa = ukupnaMasa;
     }
 
@@ -94,6 +99,8 @@ public class Vagarskapotvrda implements Serializable {
         this.jmbg = jmbg;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public Collection<Prijemnica> getPrijemnicaCollection() {
         return prijemnicaCollection;
     }
@@ -102,6 +109,8 @@ public class Vagarskapotvrda implements Serializable {
         this.prijemnicaCollection = prijemnicaCollection;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public Collection<Stavkavagarskepotvrde> getStavkavagarskepotvrdeCollection() {
         return stavkavagarskepotvrdeCollection;
     }
@@ -132,7 +141,7 @@ public class Vagarskapotvrda implements Serializable {
 
     @Override
     public String toString() {
-        return brojVagarskePotvrde+"";
+        return brojVagarskePotvrde + "";
     }
     
 }

@@ -24,15 +24,15 @@ public class StavkavagarskepotvrdePK implements Serializable {
     private int brojVagarskePotvrde;
     @Basic(optional = false)
     @NotNull
-    @Column(name = "redniBroj")
-    private int redniBroj;
+    @Column(name = "brojStavke")
+    private int brojStavke;
 
     public StavkavagarskepotvrdePK() {
     }
 
-    public StavkavagarskepotvrdePK(int brojVagarskePotvrde, int redniBroj) {
+    public StavkavagarskepotvrdePK(int brojVagarskePotvrde, int brojStavke) {
         this.brojVagarskePotvrde = brojVagarskePotvrde;
-        this.redniBroj = redniBroj;
+        this.brojStavke = brojStavke;
     }
 
     public int getBrojVagarskePotvrde() {
@@ -43,19 +43,19 @@ public class StavkavagarskepotvrdePK implements Serializable {
         this.brojVagarskePotvrde = brojVagarskePotvrde;
     }
 
-    public int getRedniBroj() {
-        return redniBroj;
+    public int getBrojStavke() {
+        return brojStavke;
     }
 
-    public void setRedniBroj(int redniBroj) {
-        this.redniBroj = redniBroj;
+    public void setBrojStavke(int brojStavke) {
+        this.brojStavke = brojStavke;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
         hash += (int) brojVagarskePotvrde;
-        hash += (int) redniBroj;
+        hash += (int) brojStavke;
         return hash;
     }
 
@@ -69,7 +69,7 @@ public class StavkavagarskepotvrdePK implements Serializable {
         if (this.brojVagarskePotvrde != other.brojVagarskePotvrde) {
             return false;
         }
-        if (this.redniBroj != other.redniBroj) {
+        if (this.brojStavke != other.brojStavke) {
             return false;
         }
         return true;
@@ -77,7 +77,7 @@ public class StavkavagarskepotvrdePK implements Serializable {
 
     @Override
     public String toString() {
-        return "com.aleksandra.domen.StavkavagarskepotvrdePK[ brojVagarskePotvrde=" + brojVagarskePotvrde + ", redniBroj=" + redniBroj + " ]";
+        return "com.aleksandra.domen.StavkavagarskepotvrdePK[ brojVagarskePotvrde=" + brojVagarskePotvrde + ", brojStavke=" + brojStavke + " ]";
     }
     
 }
