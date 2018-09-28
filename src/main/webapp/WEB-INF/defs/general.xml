@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+"http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+    <definition name="common" template="/WEB-INF/common/classic.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="menu" value="" />
+        <put-attribute name="body" value="" />
+        <put-attribute name="head" value="/WEB-INF/common/head.jsp" />
+    </definition>
+    <definition name="index" extends="common">
+        <put-attribute name="title" value="Pocetna strana" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerNL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/index.jsp" />
+    </definition>
+    <definition name="login" extends="common">
+        <put-attribute name="title" value="Prijava" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerNL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/login.jsp" />
+    </definition>
+    <definition name="all_materials" extends="common">
+        <put-attribute name="title" value="Materijali" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/all_materials.jsp" />
+    </definition>
+    <definition name="main" extends="common">
+        <put-attribute name="title" value="Pocetna strana" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/main.jsp" />
+    </definition>
+    <definition name="add_material" extends="common">
+        <put-attribute name="title" value="Dodavanje materijala" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/add_material.jsp" />
+    </definition>
+    <definition name="find_material" extends="common">
+        <put-attribute name="title" value="Materijal" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/find_material.jsp" />
+    </definition>
+    <definition name="remove_material" extends="common">
+        <put-attribute name="title" value="Brisanje materijala" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/remove_material.jsp" />
+    </definition>
+    <definition name="update_material" extends="common">
+        <put-attribute name="title" value="Izmena materijala" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/update_material.jsp" />
+    </definition>
+    <definition name="all_goods_received_notes" extends="common">
+        <put-attribute name="title" value="Prijemnice" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/all_goods_received_notes.jsp" />
+    </definition>
+    <definition name="add_goods_received_note" extends="common">
+        <put-attribute name="title" value="Dodavanje prijemnice" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/add_goods_received_note.jsp" />
+    </definition>
+    <definition name="remove_goods_received_note" extends="common">
+        <put-attribute name="title" value="Brisanje prijemnice" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/remove_goods_received_note.jsp" />
+    </definition>
+    <definition name="update_goods_received_note" extends="common">
+        <put-attribute name="title" value="Izmena prijemnice" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/update_goods_received_note.jsp" />
+    </definition>
+    <definition name="find_goods_received_note" extends="common">
+        <put-attribute name="title" value="Prijemnica" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/find_goods_received_note.jsp" />
+    </definition>
+    <definition name="add_goods_received_items" extends="common">
+        <put-attribute name="title" value="Dodavanje stavki" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/add_goods_received_items.jsp" />
+    </definition>
+    <definition name="change_goods_received_items" extends="common">
+        <put-attribute name="title" value="Dodavanje stavki" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/change_goods_received_items.jsp" />
+    </definition>
+    <definition name="goods_received_note_item_info" extends="common">
+        <put-attribute name="title" value="Dodavanje stavki" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/goods_received_note_item_info.jsp" />
+    </definition>
+    <definition name="change_goods_received_note_item_info" extends="common">
+        <put-attribute name="title" value="Stavka prijemnice" />
+        <put-attribute name="menu" value="/WEB-INF/common/headerL.jsp" />
+        <put-attribute name="body" value="/WEB-INF/jsp/change_goods_received_note_item_info.jsp" />
+    </definition>
+</tiles-definitions>

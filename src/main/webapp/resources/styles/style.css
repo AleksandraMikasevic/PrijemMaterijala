@@ -1,0 +1,46 @@
+body{
+    background-color: black !important; 
+}
+.error{
+    color:azure;
+}
+.errorblock{
+    color:azure;
+    background-color: black;
+    padding: 4px;
+    margin: 8px;
+}
+.ui-datepicker {
+    background: black !important;
+}
+.has-error .help-block {
+    color: red !important;
+}
+
+table {
+    counter-reset: rowNumber;
+}
+
+table tr {
+    counter-increment: rowNumber;
+}
+
+table tr td:first-child::before {
+    content: counter(rowNumber);
+    min-width: 1em;
+    margin-right: 0.5em;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+.imgbox {
+    display: grid;
+    height: 100%;
+}
+.center-fit {
+    max-width: 100%;
+    max-height: 100vh;
+    margin: auto;
+}
