@@ -7,16 +7,26 @@ package com.aleksandra.controllers;
 
 import com.aleksandra.domen.JedinicaMere;
 import com.aleksandra.domen.Materijal;
+import com.aleksandra.domen.Prijemnica;
+import com.aleksandra.domen.Stavkaprijemnice;
 import com.aleksandra.service.MaterijalService;
+import com.aleksandra.service.PrijemnicaService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -25,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 @RequestMapping("/material")
+@Scope("session")
 public class MaterijalController {
 
     @RequestMapping("/all_materials")
@@ -40,6 +51,69 @@ public class MaterijalController {
         mv.addObject("listaMaterijala", materijali);
         System.out.println("sandra svi materijali");
         return mv;
+    }
+
+    @RequestMapping("/all_materials_graph")
+    public ModelAndView all_materials_graph() {
+        ModelAndView mv = new ModelAndView("all_materials_graph");
+        return mv;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/all_materials_json_graph", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> mat_json_graph() {
+        MaterijalService materijal = new MaterijalService();
+        PrijemnicaService prijemnica = new PrijemnicaService();
+        List<Prijemnica> prijemnice = new ArrayList<>();
+        List<Materijal> materijali = new ArrayList<>();
+        try {
+            materijali = materijal.ucitajMaterijale();
+            prijemnice = prijemnica.ucitajPrijemnice();
+        } catch (Exception ex) {
+            Logger.getLogger(MaterijalController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        List<Stavkaprijemnice> stavke = new ArrayList<>();
+        for (Prijemnica prijemnica1 : prijemnice) {
+            stavke.addAll(prijemnica1.getStavkaprijemniceCollection());
+        }
+        System.out.println("duzina stavkiii: " + stavke.size());
+        JSONArray jsonArray1 = new JSONArray();
+        JSONArray jsonArray2 = new JSONArray();
+        List<String> listaMat = new ArrayList<>();
+        List<Double> listaKol = new ArrayList<>();
+        for (Materijal materijal1 : materijali) {
+            double ukupno = 0;
+            System.out.println("sifra materijala materijal: " + materijal1.getSifraMaterijala());
+            for (Stavkaprijemnice stavkaprijemnice : stavke) {
+                System.out.println("sifra materijala stavke: "+stavkaprijemnice.getSifraMaterijala().getSifraMaterijala());
+                System.out.println("sandraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1111");
+                if (stavkaprijemnice.getSifraMaterijala().getSifraMaterijala().equals(materijal1.getSifraMaterijala())) {
+                    ukupno = ukupno + stavkaprijemnice.getKolicina();
+                    System.out.println("sandraaaaaaaa; ukupno: " + ukupno);
+                }
+            }
+            //ovde dodas materijal i broj ukupno za njega
+            listaMat.add(materijal1.getNazivMaterijala());
+            listaKol.add(ukupno);
+        }
+        Map<String, Object> json = new HashMap();
+        json.put("materijali", listaMat);
+        json.put("kolicine", listaKol);
+        return json;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/all_materials_json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Materijal> mat_json() {
+        MaterijalService materijalService = new MaterijalService();
+        List<Materijal> materijali = new ArrayList<>();
+        try {
+            materijali = materijalService.ucitajMaterijale();
+        } catch (Exception ex) {
+            Logger.getLogger(MaterijalController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return materijali;
     }
 
     @RequestMapping(value = "/add_material", method = RequestMethod.GET)

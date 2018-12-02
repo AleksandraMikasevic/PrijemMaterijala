@@ -17,4 +17,7 @@ public interface IZaposleniDAO {
     public List<Zaposleni> proveriZaposlenog(String korisnickoIme, String lozinka);
 
     public List<Zaposleni> ucitajZaposlene();
+    
+        public Zaposleni pronadjiZaposlenog(String username);
+
 }

@@ -8,6 +8,8 @@
     <class>com.aleksandra.domen.Vagarskapotvrda</class>
     <class>com.aleksandra.domen.Zaposleni</class>
     <class>com.aleksandra.domen.Stavkavagarskepotvrde</class>
+    <class>com.aleksandra.domen.ZaposleniUloga</class>
+    <class>com.aleksandra.domen.Dobavljac</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/njprojekat?zeroDateTimeBehavior=convertToNull"/>

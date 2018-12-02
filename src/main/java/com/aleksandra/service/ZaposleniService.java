@@ -26,9 +26,15 @@ public class ZaposleniService implements IZaposleniService {
     public Zaposleni proveriZaposlenog(String username, String password) throws Exception {
         ZaposleniDAO zaposleniDAO = new ZaposleniDAO();
         List<Zaposleni> zaposleni = zaposleniDAO.proveriZaposlenog(username, password);
-        if(zaposleni.size() == 0) {
+        if (zaposleni.size() == 0) {
             throw new Exception("Pogresno ime i/ili lozinka.");
         }
         return zaposleni.get(0);
+    }
+
+    @Override
+    public Zaposleni pronadjiZaposlenog(String username) throws Exception {
+        ZaposleniDAO zaposleniDAO = new ZaposleniDAO();
+        return zaposleniDAO.pronadjiZaposlenog(username);
     }
 }

@@ -13,18 +13,24 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author User
  */
+@Repository
 public class PrijemnicaDAO implements IPrijemnicaDAO {
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public void dodajPrijemnicu(Prijemnica prijemnica) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         em.getTransaction().begin();
         em.persist(prijemnica);
         for (Stavkaprijemnice stavka : prijemnica.getStavkaprijemniceCollection()) {
@@ -38,7 +44,7 @@ public class PrijemnicaDAO implements IPrijemnicaDAO {
     @Override
     public void obrisiPrijemnicu(int prijemnicaID) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Prijemnica prijemnica = em.find(Prijemnica.class, prijemnicaID);
         if (prijemnica == null) {
             System.out.println("Ne postoji trazena prijemnica za brisanje.");
@@ -54,7 +60,7 @@ public class PrijemnicaDAO implements IPrijemnicaDAO {
     @Override
     public Prijemnica pronadjiPrijemnicu(int prijemnicaID) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Prijemnica prijemnica = em.find(Prijemnica.class, prijemnicaID);
         if (prijemnica == null) {
             System.out.println("Ne postoji trazena prijemnica.");
@@ -66,7 +72,7 @@ public class PrijemnicaDAO implements IPrijemnicaDAO {
     @Override
     public List<Prijemnica> pronadjiSvePrijemnice() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Query query = em.createNamedQuery("Prijemnica.findAll", Prijemnica.class);
         List<Prijemnica> prijemnice = query.getResultList();
         em.close();
@@ -77,7 +83,7 @@ public class PrijemnicaDAO implements IPrijemnicaDAO {
     @Override
     public void zapamtiPrijemnicu(Prijemnica prijemnica) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Prijemnica prijemnicaProvera = em.find(Prijemnica.class, prijemnica.getBrojPrijemnice());
         if (prijemnicaProvera == null) {
             System.out.println("Ne postoji trazena prijemnica za izmenu.");
@@ -93,7 +99,7 @@ public class PrijemnicaDAO implements IPrijemnicaDAO {
     @Override
     public int vratiBrojPrijemnice() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Query query = em.createNamedQuery("Prijemnica.getNumber", Integer.class);
         if (query.getSingleResult() == null) {
             return 1;

@@ -11,49 +11,58 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author User
  */
-public class VagarskaPotvrdaDAO implements IVagarskaPotvrdaDAO{
+@Repository
+public class VagarskaPotvrdaDAO implements IVagarskaPotvrdaDAO {
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public void dodajVagarskuPotvrdu(Vagarskapotvrda vagarskaPotvrda) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         em.getTransaction().begin();
         em.persist(vagarskaPotvrda);
         em.getTransaction().commit();
         em.close();
-        emf.close();    }
+        emf.close();
+    }
 
     @Override
     public Vagarskapotvrda pronadjiVagarskuPotvrdu(int vagarskaPotvrdaID) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Vagarskapotvrda vagarskaPotvrda = em.find(Vagarskapotvrda.class, vagarskaPotvrdaID);
         if (vagarskaPotvrda == null) {
             System.out.println("Ne postoji trazena vagarskaPotvrda.");
             return null;
         }
-        return vagarskaPotvrda;    }
+        return vagarskaPotvrda;
+    }
 
     @Override
     public List<Vagarskapotvrda> pronadjiSveVagarskePotvrde() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Query query = em.createNamedQuery("Vagarskapotvrda.findAll", Vagarskapotvrda.class);
         List<Vagarskapotvrda> vagarskePotvrde = query.getResultList();
         em.close();
         emf.close();
-        return vagarskePotvrde;    }
+        return vagarskePotvrde;
+    }
 
     @Override
     public void zapamtiVagarskuPotvrdu(Vagarskapotvrda vagarskaPotvrda) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Vagarskapotvrda vagarskaPotvrdaProvera = em.find(Vagarskapotvrda.class, vagarskaPotvrda.getBrojVagarskePotvrde());
         if (vagarskaPotvrdaProvera == null) {
             System.out.println("Ne postoji trazena vagarska potvrda za izmenu.");
@@ -63,6 +72,7 @@ public class VagarskaPotvrdaDAO implements IVagarskaPotvrdaDAO{
         em.merge(vagarskaPotvrda);
         em.getTransaction().commit();
         em.close();
-        emf.close();    }
-    
+        emf.close();
+    }
+
 }

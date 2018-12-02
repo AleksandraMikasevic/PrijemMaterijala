@@ -21,4 +21,6 @@ public interface IVagarskaPotvrdaDAO {
     public List<Vagarskapotvrda> pronadjiSveVagarskePotvrde();
 
     public void zapamtiVagarskuPotvrdu(Vagarskapotvrda vagarskaPotvrda);
+
+
 }

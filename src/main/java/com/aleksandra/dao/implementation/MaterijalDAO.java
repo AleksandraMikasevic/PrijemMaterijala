@@ -11,18 +11,24 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import org.springframework.stereotype.Repository;
 
 /**
  *
  * @author User
  */
+@Repository
 public class MaterijalDAO implements IMaterijalDAO {
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public void dodajMaterijal(Materijal materijal) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         em.getTransaction().begin();
         em.persist(materijal);
         em.getTransaction().commit();
@@ -31,9 +37,9 @@ public class MaterijalDAO implements IMaterijalDAO {
     }
 
     @Override
-    public void obrisiMaterijal(String materijalID) throws Exception{
+    public void obrisiMaterijal(String materijalID) throws Exception {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Materijal materijal = em.find(Materijal.class, materijalID);
         if (materijal == null) {
             throw new Exception("Ne postoji trazeni materijal za brisanje.");
@@ -48,18 +54,18 @@ public class MaterijalDAO implements IMaterijalDAO {
     @Override
     public List<Materijal> ucitajMaterijale() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Query query = em.createNamedQuery("Materijal.findAll", Materijal.class);
         List<Materijal> materijali = query.getResultList();
         em.close();
         emf.close();
-        return materijali;   
+        return materijali;
     }
 
     @Override
     public Materijal pronadjiMaterijal(String materijalID) {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Materijal materijal = em.find(Materijal.class, materijalID);
         if (materijal == null) {
             System.out.println("Ne postoji trazeni materijal.");
@@ -69,9 +75,9 @@ public class MaterijalDAO implements IMaterijalDAO {
     }
 
     @Override
-    public void zapamtiMaterijal(Materijal materijal) throws Exception{
+    public void zapamtiMaterijal(Materijal materijal) throws Exception {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.aleksandra_NJProjekatFED_war_1.0-SNAPSHOTPU");
-        EntityManager em = emf.createEntityManager();
+        em = emf.createEntityManager();
         Materijal materijalProvera = em.find(Materijal.class, materijal.getSifraMaterijala());
         if (materijalProvera == null) {
             throw new Exception("Ne postoji trazen materijal za izmenu.");
@@ -80,6 +86,7 @@ public class MaterijalDAO implements IMaterijalDAO {
         em.merge(materijal);
         em.getTransaction().commit();
         em.close();
-        emf.close();    }
+        emf.close();
+    }
 
 }

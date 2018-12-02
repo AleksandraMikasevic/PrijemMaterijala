@@ -5,12 +5,14 @@
  */
 package com.aleksandra.controllers;
 
+import com.aleksandra.domen.Dobavljac;
 import com.aleksandra.domen.Materijal;
 import com.aleksandra.domen.Prijemnica;
 import com.aleksandra.domen.Stavkaprijemnice;
 import com.aleksandra.domen.StavkaprijemnicePK;
 import com.aleksandra.domen.Vagarskapotvrda;
 import com.aleksandra.domen.Zaposleni;
+import com.aleksandra.service.DobavljacService;
 import com.aleksandra.service.MaterijalService;
 import com.aleksandra.service.PrijemnicaService;
 import com.aleksandra.service.VagarskaPotvrdaService;
@@ -22,6 +24,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.context.annotation.Scope;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -38,12 +42,14 @@ import org.springframework.web.servlet.ModelAndView;
  */
 @Controller
 @RequestMapping("/goods_received_note")
+@Scope("session")
 public class PrijemnicaController {
 
     Prijemnica prijemnica = new Prijemnica();
 
     @RequestMapping("/all_goods_received_notes")
     public ModelAndView all_goods_received_notes() {
+
         prijemnica = new Prijemnica();
         PrijemnicaService prijemnicaService = new PrijemnicaService();
         List<Prijemnica> prijemnice = new ArrayList<>();
@@ -57,30 +63,69 @@ public class PrijemnicaController {
         return mv;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/all_goods_received_note_json", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Prijemnica> all_goods_received_notes_json() {
+        prijemnica = new Prijemnica();
+        PrijemnicaService prijemnicaService = new PrijemnicaService();
+        List<Prijemnica> prijemnice = new ArrayList<>();
+        try {
+            prijemnice = prijemnicaService.ucitajPrijemnice();
+        } catch (Exception ex) {
+            Logger.getLogger(PrijemnicaController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return prijemnice;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/items_json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Stavkaprijemnice> items_json() {
+        return prijemnica.getStavkaprijemniceCollection();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<Prijemnica> mat_json() {
+        PrijemnicaService prijemnicaService = new PrijemnicaService();
+        List<Prijemnica> prijemnice = new ArrayList<>();
+        try {
+            prijemnice = prijemnicaService.ucitajPrijemnice();
+        } catch (Exception ex) {
+            Logger.getLogger(MaterijalController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return prijemnice;
+    }
+
     @RequestMapping(value = "/add_goods_received_note", method = RequestMethod.GET)
     public ModelAndView add_goods_received_note_get() {
+        prijemnica = new Prijemnica();
         ModelAndView mv = new ModelAndView("add_goods_received_note");
         PrijemnicaService prijemnicaService = new PrijemnicaService();
         try {
             int brojPrijemnice = prijemnicaService.vratiBrojPrijemnice();
-            System.out.println(brojPrijemnice+"  -----------------------------------broj prijemnice");
+            System.out.println(brojPrijemnice + "  -----------------------------------broj prijemnice");
             prijemnica.setBrojPrijemnice(brojPrijemnice);
         } catch (Exception ex) {
             Logger.getLogger(PrijemnicaController.class.getName()).log(Level.SEVERE, null, ex);
         }
         mv.addObject("grcn", prijemnica);
+        DobavljacService dobavljacS = new DobavljacService();
         VagarskaPotvrdaService vpS = new VagarskaPotvrdaService();
         ZaposleniService zaposleniS = new ZaposleniService();
         List<Vagarskapotvrda> listaVagarskihPotvrda = new ArrayList<>();
         List<Zaposleni> listaZaposlenih = new ArrayList<>();
+        List<Dobavljac> listaDobavljaca = new ArrayList<>();
         try {
-            listaVagarskihPotvrda = vpS.ucitajVagarskePotvrde();
+            listaVagarskihPotvrda = vpS.pronadjiMoguceVagarskePotvrde();
             listaZaposlenih = zaposleniS.ucitajZaposlene();
+            listaDobavljaca = dobavljacS.ucitajDobavljace();
         } catch (Exception ex) {
             Logger.getLogger(PrijemnicaController.class.getName()).log(Level.SEVERE, null, ex);
         }
         mv.addObject("listaVagarskihPotvrda", listaVagarskihPotvrda);
         mv.addObject("listaZaposlenih", listaZaposlenih);
+        mv.addObject("listaDobavljaca", listaDobavljaca);
         return mv;
     }
 
@@ -99,9 +144,10 @@ public class PrijemnicaController {
     @RequestMapping(value = "/add_goods_received_note_info", method = RequestMethod.POST)
     public String add_goods_received_note_info(@ModelAttribute("grcn") Prijemnica prijemnicaM) {
         prijemnica.setDatum(prijemnicaM.getDatum());
+        System.out.println(prijemnicaM.getDatum());
         prijemnica.setBrojVagarskePotvrde(prijemnicaM.getBrojVagarskePotvrde());
         prijemnica.setJmbg(prijemnicaM.getJmbg());
-
+        prijemnica.setPib(prijemnicaM.getPib());
         return "redirect:/goods_received_note/add_goods_received_items";
     }
 
@@ -176,37 +222,70 @@ public class PrijemnicaController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/update_add_goods_received_note_item/{rbr}/{sifraMaterijala}/{kolicina}", method = RequestMethod.GET)
-    public String update_add_goods_received_note_item(@PathVariable int rbr, @PathVariable String sifraMaterijala, @PathVariable double kolicina) {
+    @RequestMapping(value = "/add_item/{sifraMaterijala}/{kolicina}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Stavkaprijemnice add_item(@PathVariable String sifraMaterijala, @PathVariable double kolicina) {
+        Stavkaprijemnice stavka = new Stavkaprijemnice();
         try {
-            Stavkaprijemnice stavka = new Stavkaprijemnice();
-            if (prijemnica.getStavkaprijemniceCollection().size() == 0) {
+            if (prijemnica.getStavkaprijemniceCollection().isEmpty()) {
                 stavka = new Stavkaprijemnice(new StavkaprijemnicePK(prijemnica.getBrojPrijemnice(), 1));
                 stavka.setRedniBroj(1);
             } else {
                 stavka = new Stavkaprijemnice(new StavkaprijemnicePK(prijemnica.getBrojPrijemnice(), prijemnica.getStavkaprijemniceCollection().get(prijemnica.getStavkaprijemniceCollection().size() - 1).getStavkaprijemnicePK().getBrojStavke() + 1));
-                stavka.setRedniBroj(rbr);
+                stavka.setRedniBroj(prijemnica.getStavkaprijemniceCollection().size() + 1);
             }
             stavka.setSifraMaterijala((new MaterijalService().pronadjiMaterijal(sifraMaterijala)));
             stavka.setPrijemnica(prijemnica);
             stavka.setKolicina(kolicina);
             prijemnica.getStavkaprijemniceCollection().add(stavka);
-            String s = " <tr>"
-                    + "<th scope=\"row\">" + rbr + "</th>"
-                    + "<td>" + kolicina + "</td>"
-                    + "<td>" + sifraMaterijala + "</td>"
-                    + "<td>"
-                    + "<a href=\'/NJProjekatFED/goods_received_note/change_goods_received_note_item_info/" + rbr + "'\" class=\"btn btn-primary\"><i class=\"fa fa-cogs\"></i></a>"
-                    + "</td>"
-                    + "</tr>";
-            return s;
         } catch (Exception ex) {
             Logger.getLogger(PrijemnicaController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return stavka;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/update_item/{rbr}/{sifraMaterijala}/{kolicina}", method = RequestMethod.GET)
+    public String update_item(@PathVariable int rbr, @PathVariable String sifraMaterijala, @PathVariable double kolicina) {
+        Stavkaprijemnice stv = new Stavkaprijemnice();
+        for (Stavkaprijemnice stavkaprijemnice : prijemnica.getStavkaprijemniceCollection()) {
+            if (stavkaprijemnice.getStavkaprijemnicePK().getBrojStavke() == rbr) {
+                stv = stavkaprijemnice;
+            }
+        }
+        stv.setKolicina(kolicina);
+        stv.getSifraMaterijala().setSifraMaterijala(sifraMaterijala);
         return null;
     }
 
-    
+    @ResponseBody
+    @RequestMapping(value = "/remove_item/{brojStavke}", method = RequestMethod.GET)
+    public Stavkaprijemnice remove_item(@PathVariable int brojStavke) {
+        Stavkaprijemnice stv = new Stavkaprijemnice();
+        for (Stavkaprijemnice stavkaprijemnice : prijemnica.getStavkaprijemniceCollection()) {
+            if (stavkaprijemnice.getStavkaprijemnicePK().getBrojStavke() == brojStavke) {
+                stv = stavkaprijemnice;
+            }
+        }
+        prijemnica.getStavkaprijemniceCollection().remove(stv);
+        srediRbr();
+        return null;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/item_json", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Stavkaprijemnice item_json() {
+        Stavkaprijemnice stavka = new Stavkaprijemnice();
+        stavka.setKolicina(100.00);
+        stavka.setRedniBroj(1);
+        Materijal materijal = new Materijal();
+        materijal.setCena(100.00);
+        materijal.setJedinicaMere("cm");
+        materijal.setNazivMaterijala("naziv");
+        materijal.setSifraMaterijala("sifra");
+        stavka.setSifraMaterijala(materijal);
+        return stavka;
+    }
+
     @RequestMapping(value = "/goods_received_note_item_info/{rbr}", method = RequestMethod.GET)
     public ModelAndView goods_received_note_item_info(@PathVariable int rbr) {
         ModelAndView mv = new ModelAndView("goods_received_note_item_info");
@@ -317,6 +396,7 @@ public class PrijemnicaController {
     @RequestMapping(value = "/update_goods_received_note/{id}", method = RequestMethod.GET)
     public ModelAndView update_goods_received_note(@PathVariable int id) {
         PrijemnicaService prijemnicaS = new PrijemnicaService();
+        prijemnica = new Prijemnica();
         try {
             prijemnica = prijemnicaS.pronadjiPrijemnicu(id);
         } catch (Exception ex) {
@@ -324,10 +404,13 @@ public class PrijemnicaController {
         }
         VagarskaPotvrdaService vpS = new VagarskaPotvrdaService();
         ZaposleniService zaposleniS = new ZaposleniService();
+        DobavljacService dobavljacS = new DobavljacService();
         List<Vagarskapotvrda> listaVagarskihPotvrda = new ArrayList<>();
         List<Zaposleni> listaZaposlenih = new ArrayList<>();
+        List<Dobavljac> listaDobavljaca = new ArrayList<>();
         try {
-            listaVagarskihPotvrda = vpS.ucitajVagarskePotvrde();
+            listaDobavljaca = dobavljacS.ucitajDobavljace();
+            listaVagarskihPotvrda = vpS.pronadjiMoguceVagarskePotvrde();
             listaZaposlenih = zaposleniS.ucitajZaposlene();
         } catch (Exception ex) {
             Logger.getLogger(PrijemnicaController.class.getName()).log(Level.SEVERE, null, ex);
@@ -335,6 +418,7 @@ public class PrijemnicaController {
         ModelAndView mv = new ModelAndView("update_goods_received_note", "grcn", prijemnica);
         mv.addObject("listaVagarskihPotvrda", listaVagarskihPotvrda);
         mv.addObject("listaZaposlenih", listaZaposlenih);
+        mv.addObject("listaDobavljaca", listaDobavljaca);
         return mv;
     }
 
@@ -343,7 +427,6 @@ public class PrijemnicaController {
         PrijemnicaService prijemnicaS = new PrijemnicaService();
         try {
             izracunajUkupno();
-            ispisi();
             prijemnicaS.zapamtiPrijemnicu(prijemnica);
         } catch (Exception ex) {
             Logger.getLogger(PrijemnicaController.class.getName()).log(Level.SEVERE, null, ex);
@@ -359,27 +442,25 @@ public class PrijemnicaController {
 
     private void izracunajUkupno() {
         double ukupno = 0;
+        double pdv = 0;
         for (Stavkaprijemnice stavka : prijemnica.getStavkaprijemniceCollection()) {
             try {
                 ukupno = ukupno + (stavka.getKolicina() * stavka.getSifraMaterijala().getCena());
+                pdv = pdv + (stavka.getKolicina() * stavka.getSifraMaterijala().getCena() * stavka.getSifraMaterijala().getPdv() * 0.01);
             } catch (Exception ex) {
                 Logger.getLogger(PrijemnicaController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        prijemnica.setUkupanPDV(pdv);
         prijemnica.setUkupno(ukupno);
+        prijemnica.setUkupnoSaPDV(ukupno+pdv);
     }
 
-    private void ispisi() {
-        for (Stavkaprijemnice stavkaprijemnice : prijemnica.getStavkaprijemniceCollection()) {
-            System.out.println("redni bro: " + stavkaprijemnice.getStavkaprijemnicePK().getBrojStavke());
-            System.out.println("redni bro: " + stavkaprijemnice.getRedniBroj());
-        }
 
-    }
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yy-mm-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd");
         sdf.setLenient(true);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(sdf, true));
     }

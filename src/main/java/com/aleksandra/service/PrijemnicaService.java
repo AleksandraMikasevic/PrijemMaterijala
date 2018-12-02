@@ -7,6 +7,7 @@ package com.aleksandra.service;
 
 import com.aleksandra.dao.implementation.PrijemnicaDAO;
 import com.aleksandra.domen.Prijemnica;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,6 +19,7 @@ public class PrijemnicaService implements IPrijemnicaService {
     @Override
     public void dodajPrijemnicu(Prijemnica prijemnica) throws Exception {
         PrijemnicaDAO prijemnicaDAO = new PrijemnicaDAO();
+        prijemnica.setDatumUnosa(new Date());
         prijemnicaDAO.dodajPrijemnicu(prijemnica);
     }
 
@@ -51,6 +53,14 @@ public class PrijemnicaService implements IPrijemnicaService {
     public int vratiBrojPrijemnice() throws Exception {
         PrijemnicaDAO prijemnicaDAO = new PrijemnicaDAO();
         return prijemnicaDAO.vratiBrojPrijemnice();
+    }
+
+    public List<Prijemnica> ucitajPrijemniceOdDo(int start, int pageLength) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public List<Prijemnica> ucitajPrijemniceTabela(int start, int end, String sortField, String sortDirection) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }
